@@ -1,90 +1,67 @@
 import 'package:flutter/material.dart';
-import 'package:myfirstproject/page/DetailPage.dart';
-class HomePge extends StatefulWidget {
-static final String id = 'home_page';
+class HomePage extends StatefulWidget {
+  static final String id = 'home_page';
 
   @override
-  State<HomePge> createState() => _HomePgeState();
+  State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePgeState extends State<HomePge> {
+class _HomePageState extends State<HomePage>  with SingleTickerProviderStateMixin{
+
+  late AnimationController _controller;
+  late Animation _animation;
+
   @override
-  Widget build(BuildContext context) {
+  void initState(){
+    // TODO implement initState
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 1000)
+    );
+    _animation = Tween(
+      begin: 150,
+      end: 120,
+    ).animate(CurvedAnimation(
+        parent: _controller,
+        curve:Interval(
+          0 , 1, curve: Curves.elasticIn
+        )
+    )..addStatusListener((status) {
+      if(status == AnimationStatus.completed){
+        _controller.repeat(reverse: true);
+      }
+    })
+
+    );
+  }
+
+  
+ @override
+  Widget build(BuildContext context){
     return Scaffold(
-      body:Form(
-        child: Column(
-          children: [
-            Padding(
-                padding: EdgeInsets.symmetric(horizontal: 100,vertical: 100)
-            ),
-            Container(
-              height: 45,
-              decoration: BoxDecoration(
-                color: Colors.white, borderRadius: BorderRadius.circular(22.5)),
-              width: double.infinity,
-              child: TextField(
-                onChanged: (value){},
-                style: TextStyle(fontSize: 15,color: Colors.black54),
-                decoration: InputDecoration(
-                  hintText: 'Name',
-                  hintStyle: TextStyle(color: Colors.grey),
-                  border: InputBorder.none,
-                ),
-              ),
-            ),
-            Container(
-              height: 45,
-              decoration: BoxDecoration(
-                  color: Colors.white, borderRadius: BorderRadius.circular(22.5)),
-              width: double.infinity ,
-              child: TextField(
-                onChanged: (value){},
-                style: TextStyle(fontSize: 15,color: Colors.black54),
-                decoration: InputDecoration(
-                  hintText: 'Email',
-                  hintStyle: TextStyle(color: Colors.grey),
-                  border: InputBorder.none,
-                ),
-              ),
-            ),
-            Container(
-              height: 45,
-              decoration: BoxDecoration(
-                  color: Colors.white, borderRadius: BorderRadius.circular(22.5)),
-              width: double.infinity ,
-              child: TextField(
-                onChanged: (value){},
-                style: TextStyle(fontSize: 15,color: Colors.black54),
-                decoration: InputDecoration(
-                  hintText: 'PassWord',
-                  hintStyle: TextStyle(color: Colors.grey),
-                  border: InputBorder.none,
-                ),
-              ),
-            ),
-           Container(
-
-             child:  FlatButton(
-               minWidth: 251,
-                 color: Colors.blue,
-                 shape: RoundedRectangleBorder(
-                     borderRadius: BorderRadius.circular(0)
-                 ),
-                 onPressed: (){
-                 Future _openDetais() async{
-                   Navigator.of(context).push(new MaterialPageRoute(builder: (BuildContext context){
-                     return new DetailPage(input:"helo",);
-                   })
-                       };
-                 },
-                 child: Text('Sign in')
-
-             ),
-           )
-          ],
-        ),
-
+      appBar: AppBar(
+        title: Text('Animation Studio'),
       ),
+      body: AnimatedBuilder(
+        animation: _animation,
+        builder: (ctx,ch) => Container(
+          width: 100,
+          height: 100,
+          margin: EdgeInsets.only(
+            top: _animation.value,
+            left: 125
+          ),
+          child: Image.asset('assets/images/ic_launcher4.jpg'),
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+        floatingActionButton: FloatingActionButton(
+          child: Icon(Icons.play_arrow),
+          onPressed: (){
+            _controller.forward();
+          },
+        ),
     );
   }
 }
